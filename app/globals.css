@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --rose-blush: #ffd6e0;
+  --rose-deep: #e11d48;
+  --rose-soft: #fb7185;
+  --cream: #fff8f0;
+  --gold: #d4a853;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--cream);
+}
+
+/* Shimmer text */
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    #e11d48 0%,
+    #fb7185 25%,
+    #d4a853 50%,
+    #fb7185 75%,
+    #e11d48 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Petal fall */
+@keyframes petalFall {
+  0% { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 1; }
+  50% { transform: translateY(50vh) rotate(180deg) translateX(40px); opacity: 0.8; }
+  100% { transform: translateY(110vh) rotate(360deg) translateX(-20px); opacity: 0; }
+}
+
+.petal {
+  position: fixed;
+  pointer-events: none;
+  animation: petalFall linear infinite;
+  z-index: 0;
+  font-size: 1.5rem;
+  opacity: 0;
+}
+
+/* Floating babies */
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0.85; }
+  50% { transform: translateY(-30px) scale(1.1) rotate(8deg); opacity: 1; }
+  100% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0.85; }
+}
+
+.baby-float {
+  animation: floatUp ease-in-out infinite;
+}
+
+/* Soft glow border */
+.glow-border {
+  box-shadow: 0 0 20px rgba(251, 113, 133, 0.3), 0 0 60px rgba(225, 29, 72, 0.1);
+}
+
+/* Card glass */
+.glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 182, 193, 0.4);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #fff0f3; }
+::-webkit-scrollbar-thumb { background: #fda4af; border-radius: 3px; }
