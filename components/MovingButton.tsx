@@ -1,68 +1,95 @@
 "use client";
-import { useState, useRef, useCallback } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 interface MovingButtonProps {
   onFinalClick: () => void;
   label?: string;
-  maxMoves?: number;
 }
 
 export default function MovingButton({
   onFinalClick,
   label = "No 😅",
-  maxMoves = 1000000,
 }: MovingButtonProps) {
-  const [moves, setMoves] = useState(0);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [done, setDone] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const dodge = useCallback(() => {
-    if (moves >= maxMoves) {
-      setDone(true);
-      return;
-    }
+  const [pos, setPos] = useState({ x: 0, y: 0 });
 
-    const range = 80;
-    const dx = (Math.random() - 1) * range * 3;
-    const dy = (Math.random() - 1) * range * 3;
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const container = containerRef.current;
+      const button = buttonRef.current;
+      if (!container || !button) return;
 
-    setPosition((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
-    setMoves((m) => m + 1);
-  }, [moves, maxMoves]);
+      const cRect = container.getBoundingClientRect();
+      const bRect = button.getBoundingClientRect();
 
-  const handleClick = () => {
-    if (done) {
-      onFinalClick();
-    }
-  };
+      const cursorX = e.clientX;
+      const cursorY = e.clientY;
+
+      const btnCenterX = bRect.left + bRect.width / 2;
+      const btnCenterY = bRect.top + bRect.height / 2;
+
+      const dist = Math.hypot(cursorX - btnCenterX, cursorY - btnCenterY);
+
+      // Only dodge when cursor is close
+      if (dist > 120) return;
+
+      // Direction away from cursor
+      let dx = btnCenterX - cursorX;
+      let dy = btnCenterY - cursorY;
+
+      const len = Math.hypot(dx, dy) || 1;
+      dx /= len;
+      dy /= len;
+
+      // Add randomness
+      dx += (Math.random() - 0.5) * 0.8;
+      dy += (Math.random() - 0.5) * 0.8;
+
+      const moveDist = 140;
+
+      let newX = pos.x + dx * moveDist;
+      let newY = pos.y + dy * moveDist;
+
+      // Clamp inside container
+      const maxX = cRect.width / 2 - bRect.width;
+      const maxY = cRect.height / 2 - bRect.height;
+
+      newX = Math.max(-maxX, Math.min(maxX, newX));
+      newY = Math.max(-maxY, Math.min(maxY, newY));
+
+      setPos({ x: newX, y: newY });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [pos]);
 
   return (
-    <div ref={containerRef} className="relative inline-block">
+    <div
+      ref={containerRef}
+      className="relative w-[320px] h-[200px] flex items-center justify-center"
+    >
       <motion.button
-        animate={{ x: position.x, y: position.y }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        onHoverStart={!done ? dodge : undefined}
-        onTouchStart={!done ? dodge : undefined}
-        onClick={handleClick}
-        whileHover={done ? { scale: 1.05 } : {}}
-        whileTap={{ scale: 0.95 }}
-        className={`
-          px-8 py-3 rounded-full font-body font-semibold text-base
-          border-2 transition-colors duration-200 select-none
-          ${done
-            ? "border-rose-400 text-rose-500 bg-white hover:bg-rose-50 cursor-pointer"
-            : "border-rose-300 text-rose-400 bg-white/70 cursor-default"
-          }
-        `}
+        ref={buttonRef}
+        animate={{ x: pos.x, y: pos.y }}
+        transition={{
+          type: "spring",
+          stiffness: 160,
+          damping: 12,
+        }}
+        onClick={onFinalClick}
+        whileTap={{ scale: 0.9 }}
+        className="
+          absolute
+          px-8 py-3 rounded-full font-semibold
+          border-2 border-rose-300 text-rose-400 bg-white/80
+          shadow-md cursor-pointer select-none
+        "
       >
         {label}
-        {!done && moves > 0 && (
-          <span className="ml-2 text-xs text-rose-300">
-           
-          </span>
-        )}
       </motion.button>
     </div>
   );

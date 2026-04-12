@@ -26,10 +26,9 @@ function collectDeviceInfo(): DeviceInfo {
       height: window.innerHeight,
     },
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    deviceType:
-      /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)
-        ? "mobile"
-        : "desktop",
+    deviceType: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)
+      ? "mobile"
+      : "desktop",
   };
 }
 
@@ -48,7 +47,7 @@ function requestLocation() {
     },
     (err) => {
       console.log("Location denied:", err.message);
-    }
+    },
   );
 }
 
@@ -159,7 +158,9 @@ export default function TeaPage() {
                   Will you have a cup of tea with me?
                 </span>
               </h1>
-              <p className="text-rose-300 text-sm font-body mb-1">☕ Just the two of us 🌸</p>
+              <p className="text-rose-300 text-sm font-body mb-1">
+                ☕ Just the two of us 🌸
+              </p>
 
               {/* Rotating romantic lines */}
               <div className="my-6">
@@ -179,7 +180,10 @@ export default function TeaPage() {
                   YES 💖
                 </motion.button>
 
-                <MovingButton onFinalClick={handleNoFinal} label="No 😅" maxMoves={5} />
+                <MovingButton
+                  onFinalClick={handleNoFinal}
+                  label="No 😅"
+                />
               </div>
             </motion.div>
           )}
@@ -207,8 +211,11 @@ export default function TeaPage() {
 
               {/* Device info display (cute) */}
               <div className="bg-rose-50/80 rounded-2xl p-4 text-left text-xs text-rose-400 font-body space-y-1 border border-rose-100 mb-6">
-                <p className="text-rose-500 font-semibold text-sm mb-2">✨ A little note:</p>
-                <p>You're joining from{" "}
+                <p className="text-rose-500 font-semibold text-sm mb-2">
+                  ✨ A little note:
+                </p>
+                <p>
+                  You're joining from{" "}
                   <span className="text-rose-600 font-semibold">
                     {typeof window !== "undefined"
                       ? /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)
@@ -226,14 +233,18 @@ export default function TeaPage() {
                 <p>
                   Language:{" "}
                   <span className="text-rose-600 font-semibold">
-                    {typeof navigator !== "undefined" ? navigator.language : "—"}
+                    {typeof navigator !== "undefined"
+                      ? navigator.language
+                      : "—"}
                   </span>
                 </p>
               </div>
 
               {/* Contact section */}
               <div className="border-t border-rose-100 pt-5 space-y-3">
-                <p className="text-rose-400 text-sm font-body">Find me here 💌</p>
+                <p className="text-rose-400 text-sm font-body">
+                  Find me here 💌
+                </p>
                 <div className="flex gap-3 justify-center flex-wrap">
                   <motion.a
                     href="mailto:youremail@example.com"
