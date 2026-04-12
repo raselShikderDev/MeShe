@@ -1,6 +1,5 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
-import { motion } from "framer-motion";
 
 interface MovingButtonProps {
   onFinalClick: () => void;
@@ -33,8 +32,8 @@ export default function MovingButton({
 
       const dist = Math.hypot(cursorX - btnCenterX, cursorY - btnCenterY);
 
-      // trigger earlier so it never feels clickable
-      if (dist > 180) return;
+      // trigger earlier → harder to click
+      if (dist > 200) return;
 
       let dx = btnCenterX - cursorX;
       let dy = btnCenterY - cursorY;
@@ -43,8 +42,8 @@ export default function MovingButton({
       dx /= len;
       dy /= len;
 
-      // 🔥 BOOST horizontal movement
-      dx *= 1.8;
+      // 🔥 boost horizontal movement
+      dx *= 2;
 
       // randomness
       dx += (Math.random() - 0.5) * 0.8;
@@ -55,7 +54,7 @@ export default function MovingButton({
       dx /= len;
       dy /= len;
 
-      const moveDist = 40 + Math.random() * 120;
+      const moveDist = 50 + Math.random() * 120;
 
       let newX = pos.x + dx * moveDist;
       let newY = pos.y + dy * moveDist;
@@ -63,14 +62,9 @@ export default function MovingButton({
       const maxX = cRect.width / 2 - bRect.width;
       const maxY = cRect.height / 2 - bRect.height;
 
-      // 🔥 EDGE ESCAPE (prevents stuck feeling)
-      if (Math.abs(newX) >= maxX - 10) {
-        newX = -newX * 0.7; // bounce back
-      }
-
-      if (Math.abs(newY) >= maxY - 10) {
-        newY = -newY * 0.7;
-      }
+      // bounce from edges
+      if (Math.abs(newX) >= maxX - 5) newX = -newX * 0.7;
+      if (Math.abs(newY) >= maxY - 5) newY = -newY * 0.7;
 
       newX = Math.max(-maxX, Math.min(maxX, newX));
       newY = Math.max(-maxY, Math.min(maxY, newY));
@@ -85,29 +79,26 @@ export default function MovingButton({
   return (
     <div
       ref={containerRef}
-      className="relative w-[420px] h-[220px] flex items-center justify-center"
+      className="relative w-[450px] h-[250px] flex items-center justify-center"
     >
-      <motion.button
+      <button
         ref={buttonRef}
-        animate={{ x: pos.x, y: pos.y }}
-        transition={{
-          type: "spring",
-          stiffness: 140,
-          damping: 14,
-        }}
         onClick={(e) => {
-          e.preventDefault(); // 🔥 prevent accidental click
+          e.preventDefault(); // prevent accidental click
         }}
-        whileTap={{ scale: 0.9 }}
+        style={{
+          transform: `translate(${pos.x}px, ${pos.y}px)`,
+        }}
         className="
           absolute
           px-8 py-3 rounded-full font-semibold
-          border-2 border-rose-300 text-rose-400 bg-white/80
+          border-2 border-rose-300 text-rose-400 bg-white/90
           shadow-md cursor-pointer select-none
+          transition-transform duration-75
         "
       >
         {label}
-      </motion.button>
+      </button>
     </div>
   );
 }
