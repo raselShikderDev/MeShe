@@ -33,29 +33,44 @@ export default function MovingButton({
 
       const dist = Math.hypot(cursorX - btnCenterX, cursorY - btnCenterY);
 
-      // Only dodge when cursor is close
-      if (dist > 120) return;
+      // trigger earlier so it never feels clickable
+      if (dist > 180) return;
 
-      // Direction away from cursor
       let dx = btnCenterX - cursorX;
       let dy = btnCenterY - cursorY;
 
-      const len = Math.hypot(dx, dy) || 1;
+      let len = Math.hypot(dx, dy) || 1;
       dx /= len;
       dy /= len;
 
-      // Add randomness
-      dx += (Math.random() - 0.5) * 0.8;
-      dy += (Math.random() - 0.5) * 0.8;
+      // 🔥 BOOST horizontal movement
+      dx *= 1.8;
 
-      const moveDist = 140;
+      // randomness
+      dx += (Math.random() - 0.5) * 0.8;
+      dy += (Math.random() - 0.5) * 0.6;
+
+      // normalize again
+      len = Math.hypot(dx, dy) || 1;
+      dx /= len;
+      dy /= len;
+
+      const moveDist = 40 + Math.random() * 120;
 
       let newX = pos.x + dx * moveDist;
       let newY = pos.y + dy * moveDist;
 
-      // Clamp inside container
       const maxX = cRect.width / 2 - bRect.width;
       const maxY = cRect.height / 2 - bRect.height;
+
+      // 🔥 EDGE ESCAPE (prevents stuck feeling)
+      if (Math.abs(newX) >= maxX - 10) {
+        newX = -newX * 0.7; // bounce back
+      }
+
+      if (Math.abs(newY) >= maxY - 10) {
+        newY = -newY * 0.7;
+      }
 
       newX = Math.max(-maxX, Math.min(maxX, newX));
       newY = Math.max(-maxY, Math.min(maxY, newY));
@@ -70,17 +85,19 @@ export default function MovingButton({
   return (
     <div
       ref={containerRef}
-      className="relative w-[320px] h-[200px] flex items-center justify-center"
+      className="relative w-[420px] h-[220px] flex items-center justify-center"
     >
       <motion.button
         ref={buttonRef}
         animate={{ x: pos.x, y: pos.y }}
         transition={{
           type: "spring",
-          stiffness: 160,
-          damping: 12,
+          stiffness: 140,
+          damping: 14,
         }}
-        onClick={onFinalClick}
+        onClick={(e) => {
+          e.preventDefault(); // 🔥 prevent accidental click
+        }}
         whileTap={{ scale: 0.9 }}
         className="
           absolute
