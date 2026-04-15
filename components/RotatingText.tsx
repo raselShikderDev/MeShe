@@ -158,7 +158,7 @@ export default function RotatingText() {
           animate={{ opacity: 1 }}
           className="absolute -bottom-5 right-2 text-xs text-rose-300"
         >
-          paused ✋
+          paused
         </motion.span>
       )}
     </div>
