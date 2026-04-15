@@ -19,7 +19,7 @@ export default function MovingButton({
   const dodge = () => {
     const now = Date.now();
 
-    // 🔥 simple cooldown (prevents spam)
+  
     if (now - lastMove.current < 200) return;
     lastMove.current = now;
 
