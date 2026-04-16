@@ -11,7 +11,7 @@ interface FloatingItem {
   top: string;
 }
 
-const EMOJIS = ["👶", "🌸", "💕", "🌷", "✨", "🍀", "💖", "🌼", "🦋", "🌹"];
+const EMOJIS = ["👶", "🌸", "💕", "🌷", "✨", "💖", "🌼", "🦋", "🌹"];
 
 export default function FloatingElements() {
   const [items, setItems] = useState<FloatingItem[]>([]);
